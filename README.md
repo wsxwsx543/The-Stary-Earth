@@ -94,10 +94,10 @@ assignment, we'll compute area-weighted per-vertex normals:
 
 where <img src="/tex/f947b3c602ca948910b99f1601e5abed.svg?invert_in_darkmode&sanitize=true" align=middle width=36.34324319999999pt height=24.65753399999998pt/> is the set of faces neighboring the <img src="/tex/6c4adbc36120d62b98deef2a20d5d303.svg?invert_in_darkmode&sanitize=true" align=middle width=8.55786029999999pt height=14.15524440000002pt/>-th vertex.
 
-[per-vertex-normal]:(images/per-vertex-normal.png) height=300px
+![]:(images/per-vertex-normal.png)
 ![Unique triangle normals (orange) are well-defined. We can define a notion of a
 normal for each vertex (purple) by taking a (weighted) average of normals from
-incident triangles.][per-vertex-normal]
+incident triangles.]
 
 For surfaces with a mixture of smooth-looking parts and creases, it is useful to
 define normals independently for each triangle corner (as opposed to each mesh
@@ -110,11 +110,12 @@ triangle's whose normal is too different from the corner's face's normal:
 where <img src="/tex/1926c401973f24b4db4f35dca2eb381d.svg?invert_in_darkmode&sanitize=true" align=middle width=6.672392099999992pt height=14.15524440000002pt/> is the minimum dot product between two face normals before we declare
 there is a crease between them.
 
-![`./normals` should open a viewing window. Toggling `1`,`2`,`3` should switch
+![](images/fandisk-normals.png)
+`./normals` should open a viewing window. Toggling `1`,`2`,`3` should switch
 between normal types. Notice that per-face has sharp corners, but a faceted
 appearance in the curved regions; the per-vertex has nice smooth regions but
 ugly corners where averaging acts up; and per-corner is the best of both
-worlds.](images/fandisk-normals.png)
+worlds.
 
 ### .obj File Format
 
