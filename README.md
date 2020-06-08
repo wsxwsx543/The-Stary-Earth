@@ -95,9 +95,9 @@ assignment, we'll compute area-weighted per-vertex normals:
 where <img src="/tex/f947b3c602ca948910b99f1601e5abed.svg?invert_in_darkmode&sanitize=true" align=middle width=36.34324319999999pt height=24.65753399999998pt/> is the set of faces neighboring the <img src="/tex/6c4adbc36120d62b98deef2a20d5d303.svg?invert_in_darkmode&sanitize=true" align=middle width=8.55786029999999pt height=14.15524440000002pt/>-th vertex.
 
 ![]:(images/per-vertex-normal.png)
-![Unique triangle normals (orange) are well-defined. We can define a notion of a
+Unique triangle normals (orange) are well-defined. We can define a notion of a
 normal for each vertex (purple) by taking a (weighted) average of normals from
-incident triangles.]
+incident triangles.
 
 For surfaces with a mixture of smooth-looking parts and creases, it is useful to
 define normals independently for each triangle corner (as opposed to each mesh
