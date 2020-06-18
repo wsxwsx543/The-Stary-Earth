@@ -22,13 +22,13 @@ connected to each other). The connectivity is also sometimes referred to as the
 
 The [graphics pipeline](https://en.wikipedia.org/wiki/Graphics_pipeline) works
 on a per-triangle and per-vertex basis. So the simplest way to store geometry is
-a 3D position <img src="/tex/ec6276257da0cb44caa5ae4b07afb40e.svg?invert_in_darkmode&sanitize=true" align=middle width=56.27160494999998pt height=26.76175259999998pt/> for each <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/>-th vertex of the mesh. And to store
+a 3D position $\mathbf{v}_i \in  \mathbf{R}^3 $ for each $i$-th vertex of the mesh. And to store
 triangle connectivity as an ordered triplet of indices referencing vertices:
-<img src="/tex/567132d8a883ab35cbb45db628ebb96e.svg?invert_in_darkmode&sanitize=true" align=middle width=36.147533399999986pt height=22.831056599999986pt/> defines a triangle with corners at vertices <img src="/tex/5474c8baa2bc6feabb0eac4237772aab.svg?invert_in_darkmode&sanitize=true" align=middle width=14.628015599999989pt height=14.611878600000017pt/>, <img src="/tex/4e86697c693f7bd2ebcf1bf515fbba2f.svg?invert_in_darkmode&sanitize=true" align=middle width=16.08162434999999pt height=14.611878600000017pt/> and <img src="/tex/fac5b28b95f69ccc2e9d37b26c68864f.svg?invert_in_darkmode&sanitize=true" align=middle width=17.24314514999999pt height=14.611878600000017pt/>.
-Thus, the geometry is stored as a list of <img src="/tex/55a049b8f161ae7cfeb0197d75aff967.svg?invert_in_darkmode&sanitize=true" align=middle width=9.86687624999999pt height=14.15524440000002pt/> 3D vectors: efficiently, we can
-put these vectors in the rows of a real-valued matrix <img src="/tex/907f9d3f474ec1dea25687fb39c395a7.svg?invert_in_darkmode&sanitize=true" align=middle width=73.77646979999999pt height=26.76175259999998pt/>. Likewise,
-the connectivity is stored as a list of <img src="/tex/0e51a2dede42189d77627c4d742822c3.svg?invert_in_darkmode&sanitize=true" align=middle width=14.433101099999991pt height=14.15524440000002pt/> triplets: efficiently, we can put
-these triplets in the rows of an integer-valued matrix <img src="/tex/c7299835acc0beb6d4c78f128f1d90cd.svg?invert_in_darkmode&sanitize=true" align=middle width=123.31228469999999pt height=26.76175259999998pt/>.
+${i,j,k}$ defines a triangle with corners at vertices $\mathbf{v}_i$, $\mathbf{v}_j$ and $\mathbf{v}_k$.
+Thus, the geometry is stored as a list of $n$ 3D vectors: efficiently, we can
+put these vectors in the rows of a real-valued matrix $\mathbf{V} \in  \mathbf{R}^{n\times 3}$. Likewise,
+the connectivity is stored as a list of $m$ triplets: efficiently, we can put
+these triplets in the rows of an integer-valued matrix $\mathbf{F} \in  [0,n-1]^{m\times 3}$.
 
 > **Question:** What if we want to store a (pure-)quad mesh?
 
@@ -78,8 +78,8 @@ appearance](https://en.wikipedia.org/wiki/Phong_shading#Phong_interpolation).
 This raises the question: what normals should we put at vertices or corners of
 our mesh? 
 
-For a faceted surface (e.g., a cube), all corners of a planar face <img src="/tex/190083ef7a1625fbc75f243cffb9c96d.svg?invert_in_darkmode&sanitize=true" align=middle width=9.81741584999999pt height=22.831056599999986pt/> should
-share the face's normal <img src="/tex/aa0f607fb8a0f302675de85aeabededc.svg?invert_in_darkmode&sanitize=true" align=middle width=59.845697999999985pt height=26.76175259999998pt/> .
+For a faceted surface (e.g., a cube), all corners of a planar face $f$ should
+share the face's normal $\mathbf{n}_f \in  \mathbf{R}^3 $ .
 
 For a smooth surface (e.g., a sphere), corners of triangles located at the same
 vertex should share the same normal vector. This way the rendering is continuous
@@ -90,14 +90,13 @@ angle-weighted (geometrically well motivated, but not robust near zero-area
 triangles), area-weighted (geometrically reasonable, well behaved). In this
 assignment, we'll compute area-weighted per-vertex normals:
 
-<p align="center"><img src="/tex/599fe3b222b5898bd240d6ac12d5c5b5.svg?invert_in_darkmode&sanitize=true" align=middle width=161.40208425pt height=41.4976122pt/></p>
+$$\mathbf{n}_v = \frac{\Sigma \limits_{f\in N(v)} a_f \mathbf{n}_f}{\left\|\Sigma \limits_{f\in N(v)} a_f \mathbf{n}_f\right\|},$$
+where $N(v)$ is the set of faces neighboring the $v$-th vertex.
 
-where <img src="/tex/f947b3c602ca948910b99f1601e5abed.svg?invert_in_darkmode&sanitize=true" align=middle width=36.34324319999999pt height=24.65753399999998pt/> is the set of faces neighboring the <img src="/tex/6c4adbc36120d62b98deef2a20d5d303.svg?invert_in_darkmode&sanitize=true" align=middle width=8.55786029999999pt height=14.15524440000002pt/>-th vertex.
-
-![](images/per-vertex-normal.png)
-Unique triangle normals (orange) are well-defined. We can define a notion of a
+[per-vertex-normal]: images/per-vertex-normal.png height=300px
+![Unique triangle normals (orange) are well-defined. We can define a notion of a
 normal for each vertex (purple) by taking a (weighted) average of normals from
-incident triangles.
+incident triangles.][per-vertex-normal]
 
 For surfaces with a mixture of smooth-looking parts and creases, it is useful to
 define normals independently for each triangle corner (as opposed to each mesh
@@ -105,17 +104,17 @@ vertex). For each corner, we'll again compute an area-weighted average of normal
 triangles incident on the shared vertex at this corner, but we'll ignore
 triangle's whose normal is too different from the corner's face's normal:
 
-<p align="center"><img src="/tex/cc96dd182e07003c6232739259df10ec.svg?invert_in_darkmode&sanitize=true" align=middle width=245.6981736pt height=42.4291164pt/></p>
-
-where <img src="/tex/1926c401973f24b4db4f35dca2eb381d.svg?invert_in_darkmode&sanitize=true" align=middle width=6.672392099999992pt height=14.15524440000002pt/> is the minimum dot product between two face normals before we declare
+$$\mathbf{n}_{f,c} = 
+\frac{\Sigma \limits_{g\in N(v)\,|\,\mathbf{n}_g\cdot\mathbf{n}_f>\epsilon  } a_g \mathbf{n}_g}{\left\|\left\|\Sigma \limits_{g\in N(v)\,|\,\mathbf{n}_g\cdot\mathbf{n}_f>\epsilon  } a_g \mathbf{n}_g\right\|\right\|},
+$$
+where $\epsilon $ is the minimum dot product between two face normals before we declare
 there is a crease between them.
 
-![](images/fandisk-normals.png)
-`./normals` should open a viewing window. Toggling `1`,`2`,`3` should switch
+![`./normals` should open a viewing window. Toggling `1`,`2`,`3` should switch
 between normal types. Notice that per-face has sharp corners, but a faceted
 appearance in the curved regions; the per-vertex has nice smooth regions but
 ugly corners where averaging acts up; and per-corner is the best of both
-worlds.
+worlds.](images/fandisk-normals.png)
 
 ### .obj File Format
 
