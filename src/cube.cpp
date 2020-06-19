@@ -50,10 +50,10 @@ void cube(
 
   UF.row(0) = Eigen::Vector4i(1, 4, 3, 0); // bottom white
   UF.row(1) = Eigen::Vector4i(9, 13, 12, 8); // top yellow
-  UF.row(2) = Eigen::Vector4i(4, 9, 8, 3); // front green
-  UF.row(3) = Eigen::Vector4i(6, 11, 10, 5); // back orange
-  UF.row(4) = Eigen::Vector4i(3, 8, 7, 2); // left red
-  UF.row(5) = Eigen::Vector4i(5, 10, 9, 4); // right blue
+  UF.row(2) = Eigen::Vector4i(5, 10, 9, 4); // front blue
+  UF.row(3) = Eigen::Vector4i(3, 8, 7, 2); // back red
+  UF.row(4) = Eigen::Vector4i(8, 3, 4, 9); // left green
+  UF.row(5) = Eigen::Vector4i(10, 5, 6, 11); // right orange
 
   NV.row(0) = Eigen::Vector3d(1, 0, 0);
   NV.row(1) = Eigen::Vector3d(-1, 0, 0);
