@@ -15,7 +15,7 @@ bool write_obj(
   assert((F.size() == 0 || F.cols() == 3 || F.cols() == 4) && "F must have 3 or 4 columns");
 
   // Reference: https://en.wikipedia.org/wiki/Wavefront_.obj_file
-  std::ofstream(file);
+  std::ofstream file(filename);
   if (!file) {
     std::cout << "Cannot open the file: " << filename << "." << std::endl;
     return false;
