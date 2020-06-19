@@ -15,8 +15,9 @@ bool write_obj(
   assert((F.size() == 0 || F.cols() == 3 || F.cols() == 4) && "F must have 3 or 4 columns");
 
   // Reference: https://en.wikipedia.org/wiki/Wavefront_.obj_file
-  std::ofstream file(filename);
-  if (!file) {
+  std::ofstream file;
+  file.open(filename);
+  if (!file.is_open()) {
     std::cout << "Cannot open the file: " << filename << "." << std::endl;
     return false;
   }
@@ -34,7 +35,7 @@ bool write_obj(
   // write texture coordinates (UV with identifier vt)
   for (int i = 0; i < UV.rows(); i++) {
     file << "vt";
-    for (int j = 0; j < UV.rows(); j++) {
+    for (int j = 0; j < UV.cols(); j++) {
       file << " " << UV(i, j);
     }
     file << std::endl;
@@ -56,9 +57,11 @@ bool write_obj(
   for (int i = 0; i < F.rows(); i++) {
     file << "f";
     for (int j = 0; j < F.cols(); j++) {
-      file << " " << F(i, j) << "/" << UF(i, j) << "/" << NF(i, j);
+      // index starts from 1.
+      file << " " << F(i, j) + 1 << "/" << UF(i, j) + 1 << "/" << NF(i, j) + 1;
     }
     file << std::endl;
   }
+  file.close();
   return true;
 }
