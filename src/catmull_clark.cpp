@@ -6,6 +6,7 @@
 #include <utility>
 #include <functional>
 
+// find all adjacent faces for a vertex
 void findVF(
   const Eigen::MatrixXd & V, 
   const Eigen::MatrixXi & F, 
@@ -22,6 +23,7 @@ void findVF(
   }
 }
 
+// calculate all face points for all faces
 void calculate_face_points(
   const Eigen::MatrixXd & V,
   const Eigen::MatrixXi & F,
@@ -36,6 +38,8 @@ void calculate_face_points(
   }
 }
 
+// make an edge by two endpoints of the edge. endpoint with smaller
+// vertex index should be the first.
 std::pair<int, int> make_edge(
   const int & id1,
   const int & id2
@@ -46,6 +50,7 @@ std::pair<int, int> make_edge(
   else return std::make_pair(id2, id1);
 }
 
+// find midpoints for all edges.
 void init_edges_mid_point(
   const Eigen::MatrixXd & V, 
   const Eigen::MatrixXi & F, 
@@ -66,6 +71,7 @@ void init_edges_mid_point(
   }
 }
 
+// find all adjacent faces for all edges.
 void findEF(
   const Eigen::MatrixXi & F, 
   std::map<std::pair<int, int>, std::vector<int> > & EF
@@ -84,6 +90,7 @@ void findEF(
   }
 }
 
+// find all adjacent edges for each vertex
 void findVE(
   const Eigen::MatrixXi & F, 
   std::map<int, std::vector<std::pair<int, int> > > & VE
@@ -106,6 +113,7 @@ void findVE(
   }
 }
 
+// calculate new point for each original vertex
 void calculate_newP(
   const Eigen::MatrixXd & V, 
   const Eigen::MatrixXi & F, 
@@ -132,10 +140,10 @@ void calculate_newP(
     R /= VE[i].size();
     newP.row(i) = (F + 2 * R + (VF[i].size() - 3) * V.row(i)) / VF[i].size();
   }
-  // std::cout<<"NewPPPPPP"<<newP<<std::endl;
 
 }
 
+// calculate the edge_points for each edge
 void calculate_edge_points(
   const Eigen::MatrixXd & V, 
   const Eigen::MatrixXi & F, 
@@ -158,6 +166,7 @@ void calculate_edge_points(
   }
 }
 
+// since Eigen is not hashable, then I will use tuple to save in the hashmap as key.
 std::tuple<double, double, double> vec_to_pair(
   Eigen::RowVector3d vec
 )
@@ -173,9 +182,6 @@ void catmull_clark(
   Eigen::MatrixXd & SV,
   Eigen::MatrixXi & SF)
 {
-  // std::cout<<V<<std::endl << F<<std::endl;
-  // std::cout << 1 <<"\n";
-
   if (num_iters == 0) {
     SV = V;
     SF = F;
@@ -184,45 +190,33 @@ void catmull_clark(
   std::map<std::tuple<double, double, double>, int> points_info;
   std::vector<std::vector<int> > VF;
   findVF(V, F, VF);
-  // for (int i = 0; i < VF.size(); i++) {
-  //   std::cout<<i<<":";
-  //   for (int j = 0; j < VF[i].size(); j++) {
-  //     std::cout<<VF[i][j]<<",";
-  //   }
-  //   std::cout<<std::endl;
-  // }
 
   Eigen::MatrixXd face_points;
   calculate_face_points(V, F, face_points);
-  // std::cout<<face_points<<"\n";
 
   std::map<std::pair<int, int>, Eigen::RowVector3d> edge_mid_map;
   init_edges_mid_point(V, F, edge_mid_map);
-  // for (auto key = edge_mid_map.begin(); key!=edge_mid_map.end(); key++) {
-  //   std::cout << key->first.first<<","<<key->first.second << ":" << key->second<<"\n";
-  // }
 
   std::map<std::pair<int, int>, std::vector<int> > EF;
   findEF(F, EF);
-  // std::cout<<5<<"\n";
 
   std::map<int, std::vector<std::pair<int, int> > > VE;
   findVE(F, VE);
-  // std::cout<<6<<"\n";
 
   Eigen::MatrixXd newP;
   calculate_newP(V, F, VE, edge_mid_map, VF, face_points, newP);
-  // std::cout<<7<<"\n";
 
   std::map<std::pair<int, int>, Eigen::RowVector3d> edge_points;
   calculate_edge_points(V, F, EF, face_points, edge_points);
-  // std::cout<<8<<"\n";
   
   int rowf = F.rows();
   int rowv = V.rows();
   Eigen::MatrixXd TSV;
   Eigen::MatrixXi TSF;
-
+  // Idea: we need to find all new vertex and all new faces. Consider that for each original faces will be seperated into four parts.
+  // Then I will focus on those four parts and save it. However the problem is there will be dupulicate points. Then I will use hashmap
+  // to solve this problem. For each point it will have an index. And then I will save it in the points_info hashmap. In the end, I will
+  // save all points to SV based on the index of each point.
   TSF.resize(4*rowf, 4);
   TSV.resize(rowv+rowf+edge_points.size(), 3);
   int pt_count = 0;
