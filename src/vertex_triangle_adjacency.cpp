@@ -6,8 +6,15 @@ void vertex_triangle_adjacency(
   std::vector<std::vector<int> > & VF)
 {
   VF.resize(num_vertices);
-  ////////////////////////////////////////////////////////////////////////////
-  // Add your code here:
-  ////////////////////////////////////////////////////////////////////////////
+
+  const int numf = F.rows();
+  for (int i = 0; i < num_vertices; i++) {
+    // the ith pt
+    for (int j = 0; j < numf; j++) {
+      if (F.row(j).x() == i || F.row(j).y() == i || F.row(j).z() == i) { // adjacent to the ith vertex
+        VF[i].push_back(j);
+      }
+    }
+  }
 }
 
