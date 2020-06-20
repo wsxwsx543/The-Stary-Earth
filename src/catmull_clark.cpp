@@ -140,7 +140,6 @@ void calculate_newP(
     R /= VE[i].size();
     newP.row(i) = (F + 2 * R + (VF[i].size() - 3) * V.row(i)) / VF[i].size();
   }
-
 }
 
 // calculate the edge_points for each edge
@@ -238,14 +237,11 @@ void catmull_clark(
     if (points_info.count(vec_to_pair(newP.row(F(i, 2)))) == 0) points_info[vec_to_pair(newP.row(F(i, 2)))] = pt_count++;
     if (points_info.count(vec_to_pair(newP.row(F(i, 3)))) == 0) points_info[vec_to_pair(newP.row(F(i, 3)))] = pt_count++;
     if (points_info.count(vec_to_pair(face_points.row(i))) == 0) points_info[vec_to_pair(face_points.row(i))] = pt_count++;
-    // std::cout<<"b\n";
     TSF.row(f_count++) = Eigen::RowVector4i(points_info[vec_to_pair(edge_points[e1])], points_info[vec_to_pair(newP.row(F(i, 1)))], points_info[vec_to_pair(edge_points[e2])], points_info[vec_to_pair(face_points.row(i))]);
     TSF.row(f_count++) = Eigen::RowVector4i(points_info[vec_to_pair(face_points.row(i))], points_info[vec_to_pair(edge_points[e2])], points_info[vec_to_pair(newP.row(F(i, 2)))], points_info[vec_to_pair(edge_points[e3])]);
     TSF.row(f_count++) = Eigen::RowVector4i(points_info[vec_to_pair(edge_points[e4])], points_info[vec_to_pair(face_points.row(i))], points_info[vec_to_pair(edge_points[e3])], points_info[vec_to_pair(newP.row(F(i, 3)))]);
     TSF.row(f_count++) = Eigen::RowVector4i(points_info[vec_to_pair(newP.row(F(i, 0)))], points_info[vec_to_pair(edge_points[e1])], points_info[vec_to_pair(face_points.row(i))], points_info[vec_to_pair(edge_points[e4])]);
-    // std::cout << "c\n";
   }
-  // std::cout << 9 <<std::endl;
 
   std::map<std::tuple<double, double, double>, int>::iterator it;
   for (it = points_info.begin(); it != points_info.end(); it++) {
