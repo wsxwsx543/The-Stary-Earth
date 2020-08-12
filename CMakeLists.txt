@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(meshesh)
+project(staryearth)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 ### libIGL options: choose between header only and compiled static library
@@ -21,11 +21,11 @@ endif()
 add_library(core ${SRCFILES})
 target_link_libraries(core igl::core igl::opengl igl::opengl_glfw )
 
-add_executable(normals "normals.cpp")
-target_link_libraries(normals core igl::core igl::opengl igl::opengl_glfw )
+# add_executable(normals "normals.cpp")
+# target_link_libraries(normals core igl::core igl::opengl igl::opengl_glfw )
 
-add_executable(quad_subdivision "quad_subdivision.cpp")
-target_link_libraries(quad_subdivision core igl::core igl::opengl igl::opengl_glfw )
+# add_executable(quad_subdivision "quad_subdivision.cpp")
+# target_link_libraries(quad_subdivision core igl::core igl::opengl igl::opengl_glfw )
 
 
 add_executable(obj "obj.cpp")
