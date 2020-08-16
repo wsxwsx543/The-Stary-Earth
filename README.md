@@ -42,3 +42,8 @@ The final loss function is a linear combination of style loss function and conte
 
 ## New-generated image
 ![avatar](/style-transfer/output.png)
+
+## Texture Mapping
+Apply texture mapping algorithm from https://github.com/psarahdactyl/computer-graphics-meshes
+
+![avatar](/result.gif)
